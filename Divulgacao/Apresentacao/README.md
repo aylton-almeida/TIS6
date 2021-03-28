@@ -1,4 +1,3 @@
 # Divulgação: Apresentação do Projeto
 
-Nesta pasta inclua arquivos de slides que foram produzidos para apresentações do projeto e de seus resultados.
-
+A apresentação pode ser encontrada no seguinte [link](https://1drv.ms/p/s!Au3pZz4ON4ATk_9Uho9dmkBRxVBcyw?e=yuWsLb)

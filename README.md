@@ -1,18 +1,14 @@
-# Nome do projeto
+# Caracterização de Bibliotecas de UI
 
-Escreva um ou dois  parágrafo resumindo o objetivo do seu projeto.
+Nosso projeto tem como objetivo caracterizar bibliotecas de UI com o objetivo de auxiliar desenvolveres e empresas na escolha de bibliotecas para seus projetos.
 
 ## Alunos integrantes da equipe
 
-* Nome completo do aluno 1
-* Nome completo do aluno 2
+- Aylton Almeida
+- Lucca Romaniello
+- Pedro Paulo
 
 ## Professores responsáveis
 
-* Nome do orientador de conteúdo (TCCI)
-* Nome do orientador de acadêmico (TCCI)
-* Nome do orientador de TCC II
-
-## Instruções de Replicação/Reprodução
-
-Apresentar instruções de como o trabalho pode ser replicado/reproduzido.
+- Jose Laerte
+- Humberto Torres

@@ -1,3 +1,3 @@
 # Código do Projeto
 
-Mantenha neste diretório todo o código do projeto. Se necessário, descreva neste arquivo aspectos relevantes da estrutura de diretórios criada para organização do código.
+O código do projeto está organizado de forma que cada pergunta do GQM está localizado em uma pasta própria.
