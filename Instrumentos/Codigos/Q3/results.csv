@@ -1,0 +1,6 @@
+,nameWithOwner,url,createdAt,releasesIn2020,averageTimeForMergePRInDays
+0,facebook/react,https://github.com/facebook/react,2013-05-24T16:15:54Z,6,1
+1,Semantic-Org/Semantic-UI,https://github.com/Semantic-Org/Semantic-UI,2013-04-08T23:32:04Z,0,95
+2,sentsin/layui,https://github.com/sentsin/layui,2015-09-22T08:12:03Z,2,20
+3,SortableJS/Sortable,https://github.com/SortableJS/Sortable,2013-12-19T10:10:13Z,0,30
+4,portainer/portainer,https://github.com/portainer/portainer,2016-05-19T20:15:28Z,6,18
