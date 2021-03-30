@@ -14,3 +14,4 @@ six==1.15.0
 StackAPI==0.2.0
 toml==0.10.2
 urllib3==1.26.4
+progressbar2==3.53.1

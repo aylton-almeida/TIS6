@@ -1,5 +1,5 @@
 from stackapi import StackAPI
 
 exchange = StackAPI('stackoverflow')
-comments = exchange.fetch('comments')
+comments = exchange.fetch('questions')
 print(comments)
