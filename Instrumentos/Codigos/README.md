@@ -12,7 +12,7 @@ O código do projeto está organizado de forma que cada pergunta do GQM está lo
 2. **Comunidades das bibliotecas mais populares possuem um maior suporte à duvidas?**
 
    - Número de questões respondidas no StackOverflow / número total de perguntas
-   - Tempo médio entre criação de uma Issue e seu primeiro comentário
+   - Tempo médio entre criação de uma Issue e seu fechamento
 
 3. **As bibliotecas de UI costuma receber atualizações com frequência?**
 
