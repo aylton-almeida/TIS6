@@ -1,4 +1,5 @@
 from __future__ import annotations
+from datetime import datetime
 
 
 class Repo:
@@ -9,6 +10,7 @@ class Repo:
     url: str
     stargazer_count: str
     topic: str
+    createdAt: str
 
     def __init__(self, data: dict) -> None:
         self.cursor = data.get('cursor')
@@ -17,6 +19,8 @@ class Repo:
         self.url = data.get('url')
         self.stargazer_count = data.get('stargazerCount')
         self.topic = data.get('topic')
+        self.createdAt = datetime.fromisoformat(
+            data.get('createdAt').replace('Z', '+00:00'))
 
     @staticmethod
     def from_github(data: dict) -> Repo:
@@ -28,5 +32,6 @@ class Repo:
             'name': node.get('name'),
             'url': node.get('url'),
             'stargazerCount': node.get('stargazerCount'),
-            'topic': data.get('topic')
+            'topic': data.get('topic'),
+            'createdAt': node.get('createdAt')
         })

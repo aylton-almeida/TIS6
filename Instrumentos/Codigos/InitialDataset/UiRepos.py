@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import os
 import time
 import progressbar
@@ -58,7 +59,7 @@ def mine_repos():
                 for repo in [Repo.from_github(repo) for repo in repo_data]:
                     if len(repo_list) == total_repos:
                         break
-                    elif not next((r for r in repo_list if r.name_with_owner == repo.name_with_owner), None):
+                    elif not next((r for r in repo_list if r.name_with_owner == repo.name_with_owner), None) and repo.createdAt < datetime(2021, 1, 1, tzinfo=timezone.utc):
                         repo_list.append(repo)
 
                 # break if total was reach
