@@ -26,6 +26,8 @@ def mine_repos():
     # Get env variables
     url = os.getenv('API_URL')
     token = AuthToken(os.getenv('AUTH_TOKENS').split(','))
+    topics = ['react-components', 'vue-components', 'material-components',
+              'material-design', 'ui-design', 'ui-components']
 
     total_repos = int(args.total)
     repos_per_request = int(args.per_request)
