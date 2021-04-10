@@ -2,13 +2,14 @@ import os
 from src.models.GithubException import GithubException
 import src.CsvUtils as CsvUtils
 import time
+from src.Graphql import get_repos_data
 import src.CliArgs as CLI
+import src.Graphql as Graphql
 import progressbar
 
 from src.models.AuthToken import AuthToken
 from src.models.Repo import Repo
 from dotenv import load_dotenv
-from src.Graphql import Graphql
 
 # Load env file
 load_dotenv()
@@ -31,8 +32,6 @@ def mine_repos():
     total_repos = int(args.total)
     repos_per_request = int(args.per_request)
 
-    graphql = Graphql(url, repos_per_request, topics)
-
     if total_repos % repos_per_request != 0:
         raise Exception(
             'Repos per request should be divisible by total repos number')
@@ -43,16 +42,16 @@ def mine_repos():
 
     current_cursor = args.cursor
 
-    for _i in progressbar.progressbar(range(total_repos // repos_per_request), redirect_stdout=True):
+    for i in progressbar.progressbar(range(total_repos // repos_per_request), redirect_stdout=True):
         try:
             print('Fetching cursor: {}'.format(current_cursor))
             print('Current token: {}'.format(token.get_token()))
 
             # Build query
-            query = graphql.get_query(current_cursor)
+            query = Graphql.get_query(repos_per_request, current_cursor)
 
             # Get repos
-            repo_data = graphql.get_repos_data(query, token.get_token())
+            repo_data: list = get_repos_data(url, query, token.get_token())
 
             # add to list
             repo_list = [*repo_list, *

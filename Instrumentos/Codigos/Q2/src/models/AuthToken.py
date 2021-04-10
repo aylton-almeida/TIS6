@@ -9,7 +9,7 @@ class AuthToken:
 
     def next_token(self):
         if self.current_token < len(self.tokens) - 1:
-            self.current_token += 1
+            self.current_token += 1.
         else:
             self.current_token = 0
 
