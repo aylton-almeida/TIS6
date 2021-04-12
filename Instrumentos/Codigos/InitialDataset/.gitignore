@@ -113,9 +113,6 @@ ENV/
 env.bak/
 venv.bak/
 
-# M1 pandas
-pandas/
-
 # Spyder project settings
 .spyderproject
 .spyproject

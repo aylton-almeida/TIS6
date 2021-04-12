@@ -1,13 +1,19 @@
 import argparse
 
 
-def get_args():
+def get_args(**kwargs):
+    """Generate cli args
+
+    Arguments:
+        kwargs[dict]: Pair value in which key is the arg and value a tuple with the help message and default value 
+
+    Returns:
+        Namespace: Args namespace object
+    """
+
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--cursor', help='Initial cursor string', default=None)
-    parser.add_argument(
-        '--total', help='Total repos to be fetch', default=1000)
-    parser.add_argument(
-        '--per-request', help='Number of repos per request', default=100)
+    for key, (help, default) in kwargs.items():
+        parser.add_argument("--{}".format(key), help=help, default=default)
 
     return parser.parse_args()
