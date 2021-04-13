@@ -53,8 +53,10 @@ def get_issue_ratio():
 
             temp_issues_list = []
 
-            repo_csv = '{}.csv'.format(repo.get_name())
-            CsvUtils.create_header_file(repo_csv, ['index', 'createdAt', 'closedAt', 'cursor'])
+            owner, name = repo.name_with_owner.split('/')
+            repo_csv = '{}_{}.csv'.format(owner, name)
+            CsvUtils.create_header_file(
+                repo_csv, ['index', 'createdAt', 'closedAt', 'cursor'])
 
             has_next_page = True
             while has_next_page:
