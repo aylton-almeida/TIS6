@@ -34,24 +34,19 @@ class Repo:
         else:
             self.answered_questions = 0
 
+    def calculate_issue_median(self, issues: list):
+        self.issue_close_median = median([int((datetime.fromisoformat(issue['closedAt'].replace(
+            'Z', '+00:00')) - datetime.fromisoformat(issue['createdAt'].replace('Z', '+00:00'))).days) * 24 for issue in issues])
+
     @staticmethod
     def from_github(data: dict) -> Repo:
         node = data.get('node')
-
-        issue_median = None
-        if issues := node.get('issues').get('nodes'):
-            issue_median = median([
-                int((datetime.fromisoformat(issue['closedAt'].replace('Z', '+00:00'))
-                     - datetime.fromisoformat(issue['createdAt'].replace('Z', '+00:00'))).days) * 24
-                for issue in issues
-            ])
 
         return Repo({
             'cursor': data.get('cursor'),
             'nameWithOwner': node.get('nameWithOwner'),
             'url': node.get('url'),
             'stargazerCount': node.get('stargazerCount'),
-            'issueCloseMedian': issue_median
         })
 
     @staticmethod
