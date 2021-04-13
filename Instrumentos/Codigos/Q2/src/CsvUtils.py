@@ -19,3 +19,7 @@ def read_issues_from_csv(csv: str, delimiter: str = ','):
     data_frame = pd.read_csv(csv, delimiter)
 
     return [{'createdAt': row['createdAt'], 'closedAt':  row['closedAt']} for index, row in data_frame.iterrows()]
+
+def create_header_file(csv: str, header: list):
+    with open(csv, 'w') as file:
+        file.write(','.join(header + ['\n']))

@@ -53,6 +53,9 @@ def get_issue_ratio():
 
             temp_issues_list = []
 
+            repo_csv = '{}.csv'.format(repo.get_name())
+            CsvUtils.create_header_file(repo_csv, ['index', 'createdAt', 'closedAt', 'cursor'])
+
             has_next_page = True
             while has_next_page:
                 try:
@@ -76,7 +79,7 @@ def get_issue_ratio():
                         'createdAt'), 'closedAt':  item.get('node').get('closedAt'), 'cursor': graphql.cursor} for item in issues]
                     issue_list += parsed_issues
                     CsvUtils.save_list_to_csv(
-                        parsed_issues, '{}.csv'.format(repo.get_name()), mode='a', header=False)
+                        parsed_issues, repo_csv, mode='a', header=False)
 
                 except Exception as err:
                     time.sleep(600)
@@ -85,17 +88,16 @@ def get_issue_ratio():
             time.sleep(180)
 
             # read issues csv
-            issues = CsvUtils.read_issues_from_csv(
-                '{}.csv'.format(repo.get_name()))
+            # issues = CsvUtils.read_issues_from_csv(repo_csv)
 
-            # calculate issues and save
-            repo.calculate_issue_median(issues)
+            # # calculate issues and save
+            # repo.calculate_issue_median(issues)
 
-            CsvUtils.save_list_to_csv(
-                [repo.__dict__], 'repos_with_issues.csv', mode='a', header=False)
+            # CsvUtils.save_list_to_csv(
+            #     [repo.__dict__], 'repos_with_issues.csv', mode='a', header=False)
 
             # mv issues to folder
-            shutil.move('{}.csv'.format(repo.get_name()), 'issues')
+            shutil.move(repo_csv, 'issues')
 
             bar.update(index)
 
