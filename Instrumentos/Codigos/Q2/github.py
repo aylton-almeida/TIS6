@@ -69,7 +69,7 @@ def get_issue_ratio():
                     # sleep sometime
                     temp_issues_list += issues
                     if len(temp_issues_list) > 0 and len(temp_issues_list) % 1000 == 0:
-                        time.sleep(600)
+                        time.sleep(60)
 
                     # add issues to list and save
                     parsed_issues = [{'createdAt': item.get('node').get(
@@ -81,6 +81,8 @@ def get_issue_ratio():
                 except Exception as err:
                     time.sleep(600)
                     token.next_token()
+
+            time.sleep(180)
 
             # read issues csv
             issues = CsvUtils.read_issues_from_csv(
