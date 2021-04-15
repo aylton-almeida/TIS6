@@ -12,7 +12,7 @@ from src import CsvUtils
 
 
 # Load env file
-load_dotenv('../.env')
+load_dotenv()
 
 # flush progress bar
 progressbar.streams.flush()
@@ -21,14 +21,13 @@ progressbar.streams.flush()
 def mine_repos():
 
     # parse arguments
-    args = CliArgs.get_args(total=('Total repos to be fetch', 1000),
+    args = CliArgs.get_args(total=('Total repos to be fetch', 2000),
                             perrequest=('Number of repos per request', 100))
 
     # Get env variables
     url = os.getenv('API_URL')
     token = AuthToken(os.getenv('AUTH_TOKENS').split(','))
-    topics = ['react-components', 'vue-components', 'material-components',
-              'material-design', 'ui-design', 'ui-components']
+    topics = ['react-components', 'vue-components', 'angular-components']
 
     total_repos = int(args.total)
     repos_per_request = int(args.perrequest)
