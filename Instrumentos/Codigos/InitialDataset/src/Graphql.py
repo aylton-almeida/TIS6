@@ -21,10 +21,10 @@ class Graphql:
     def get_current_topic(self):
         return self.topics[self.current_topic]
 
-    def get_query(self, stars: str = '>100'):
+    def get_query(self):
         return """
                query example {
-                 search(type: REPOSITORY, first: %(repos)i, query: "stars:%(stars)s topic:%(topic)s", after: %(after)s) {
+                 search(type: REPOSITORY, first: %(repos)i, query: "topic:%(topic)s", after: %(after)s) {
                    edges {
                      cursor  
                      node {
@@ -41,7 +41,6 @@ class Graphql:
                }
                """ % {
             'repos': self.repos_per_request,
-            'stars': stars,
             'after': ('"{}"'.format(self.cursor) if self.cursor else 'null'),
             'topic': self.get_current_topic()
         }
