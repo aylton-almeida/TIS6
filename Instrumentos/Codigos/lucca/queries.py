@@ -1,4 +1,45 @@
-def getQ3(cursor=None):
+def getQ3V2(name, owner, cursor = None):
+  return """
+      query {
+        repository(name: "%(name)s", owner: "%(owner)s") {
+          pullRequests(first: 50, states: MERGED, %(cursor)s) {
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+            edges {
+              cursor
+              node {
+                createdAt
+                mergedAt
+              }
+            }
+          }
+        }
+      } 
+  """ % {
+    'name': name, 
+    'owner': owner,
+    'cursor': """ after:"%s" """ % cursor if (cursor != None) else 'after: null'
+  }
+
+def getRepoInfo(name, owner):
+  return """
+      query {
+        repository(name: "%(name)s", owner: "%(owner)s") {
+          createdAt
+          releases {
+            totalCount
+          }
+        }
+      } 
+  """ % {
+    'name': name, 
+    'owner': owner,
+  }
+
+#deprecated
+def getQ3V1(cursor=None):
   if cursor is None:
     return """
       query {

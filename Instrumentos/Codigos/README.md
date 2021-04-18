@@ -16,5 +16,5 @@ O código do projeto está organizado de forma que cada pergunta do GQM está lo
 
 3. **As bibliotecas de UI costuma receber atualizações com frequência?**
 
-   - Número de releases mensal em 2020
+   - Número de releases / idade do repositório
    - Tempo médio para um PR ser aceito
