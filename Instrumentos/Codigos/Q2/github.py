@@ -65,7 +65,7 @@ def getIssues(repoNameWithOwner):
                     if issueData['participants'] > 2 :
                         DataFrame([issueData]).to_csv('issues.csv', mode='a', header=False, index=False)
 
-                time.sleep(10)
+                time.sleep(5)
         except:
             raise Exception('Erro ao obter dado da issue')
 
@@ -75,8 +75,10 @@ def getRepoNames(csvName: str):
     return nameWithOwner
 
 def main():
-    # getIssues('mui-org/material-ui')
-    getRepoNames('final_ui_repos.csv')
-    print(len(getRepoNames('final_ui_repos.csv')))
+    namesWithOwner = getRepoNames('final_ui_repos.csv')
+
+    for name in namesWithOwner:
+        getIssues(name)
+
 
 main()
