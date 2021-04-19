@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from src.models.Issue import Issue
 
 from src.models.Repo import Repo
 
@@ -18,3 +19,9 @@ def read_repos_from_csv(csv: str, delimiter: str = ','):
     data_frame = pd.read_csv(csv, delimiter)
 
     return [Repo.from_dataframe(row) for index, row in data_frame.iterrows()]
+
+
+def read_issues_from_csv(csv: str, delimiter: str = ','):
+    data_frame = pd.read_csv(csv, delimiter)
+
+    return [Issue.from_dataframe(row) for index, row in data_frame.iterrows()]
