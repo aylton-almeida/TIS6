@@ -1,76 +1,82 @@
 import os
-from src.models.GithubException import GithubException
-import src.CsvUtils as CsvUtils
 import time
-from src.Graphql import get_repos_data
-import src.CliArgs as CLI
-import src.Graphql as Graphql
-import progressbar
-
+import requests
+from pandas.io import json
+# from src import CliArgs
 from src.models.AuthToken import AuthToken
-from src.models.Repo import Repo
+from src.Graphql import Graphql
 from dotenv import load_dotenv
+from src.models.Issue import Issue
+from src.models.GithubException import GithubException
+from src import CsvUtils
+from pandas import *
+from src.query import getIssueQuery
+
+
+
 
 # Load env file
 load_dotenv()
 
 # flush progress bar
-progressbar.streams.flush()
+# progressbar.streams.flush()
 
+headerIndex = 0
 
-def mine_repos():
+def getHeader():
+  global headerIndex
+  if headerIndex == 0:
+    headerIndex = 1
+    return {'Authorization':  'Bearer ' + os.getenv('AUTH_TOKEN1')}
+  else:
+    headerIndex = 0
+    return {'Authorization':  'Bearer ' + os.getenv('AUTH_TOKEN2')}
 
-    # Parse arguments
-    args = CLI.get_args()
+url='https://api.github.com/graphql'
 
-    # Get env variables
-    url = os.getenv('API_URL')
-    token = AuthToken(os.getenv('AUTH_TOKENS').split(','))
-    topics = ['react-components', 'vue-components', 'material-components',
-              'material-design', 'ui-design', 'ui-components']
+def getIssueRequest(name, owner, cursor = None):
+  head = getHeader()
+  try:
+    print('Current header: %s' % head)
+    return requests.post(url, json={'query': getIssueQuery(name, owner, cursor)}, headers=head)
+  except requests.exceptions.HTTPError as err:
+    raise SystemExit(err)
 
-    total_repos = int(args.total)
-    repos_per_request = int(args.per_request)
+def getIssues(repoNameWithOwner):
+    nameWithOwner = repoNameWithOwner.split('/')
+    hasNextPage = True
+    lastCursor = None
 
-    if total_repos % repos_per_request != 0:
-        raise Exception(
-            'Repos per request should be divisible by total repos number')
-
-    repo_list: list[Repo] = []
-
-    print('Fetching repos...')
-
-    current_cursor = args.cursor
-
-    for i in progressbar.progressbar(range(total_repos // repos_per_request), redirect_stdout=True):
+    while (hasNextPage):
         try:
-            print('Fetching cursor: {}'.format(current_cursor))
-            print('Current token: {}'.format(token.get_token()))
+            json_data = json.loads(getIssueRequest(nameWithOwner[1], nameWithOwner[0],lastCursor).text)
+            if json_data is not None:
+                issues = json_data['data']['repository']['issues']['edges']
+                hasNextPage = json_data['data']['repository']['issues']['pageInfo']['hasNextPage']
+                lastCursor = json_data['data']['repository']['issues']['pageInfo']['endCursor']
+                print(len(issues))
+                
+                for issue in issues: 
+                    issueData = {
+                        'cursor':issue['cursor'],
+                        'closed': issue['node']['closed'],
+                        'participants': issue['node']['participants']['totalCount']
+                    }
+                    if issueData['participants'] > 2 :
+                        DataFrame([issueData]).to_csv('issues.csv', mode='a', header=False, index=False)
 
-            # Build query
-            query = Graphql.get_query(repos_per_request, current_cursor)
+                time.sleep(10)
+        except:
+            raise Exception('Erro ao obter dado da issue')
 
-            # Get repos
-            repo_data: list = get_repos_data(url, query, token.get_token())
+def getRepoNames(csvName: str):
+    data = read_csv(csvName)
+    nameWithOwner = data['name_with_owner'].tolist()
+    return nameWithOwner
 
-            # add to list
-            repo_list = [*repo_list, *
-                         [Repo.from_github(repo) for repo in repo_data]]
+def main():
+    # getIssues('mui-org/material-ui')
+    getRepoNames('final_ui_repos.csv')
+    print(len(getRepoNames('final_ui_repos.csv')))
 
-            # break if total was reach
-            if len(repo_list) == total_repos:
-                break
-
-            # set next cursor
-            current_cursor = repo_list[-1].cursor if len(
-                repo_list) > 0 else None
-
-        except GithubException:
-            time.sleep(len(repo_list) * 2)
-            token.next_token()
-
-    CsvUtils.save_repos_to_csv(repo_list, 'repos.csv')
-
-
-if __name__ == "__main__":
-    mine_repos()
+main()

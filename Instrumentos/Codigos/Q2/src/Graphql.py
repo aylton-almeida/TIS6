@@ -4,47 +4,62 @@ import json
 
 from requests.models import Response
 
-# TODO: change issues and topic
 
+class Graphql:
 
-def get_query(repos_per_request: int, cursor: str = None, stars: str = '>100'):
-    return """
-    query example {
-      search(type: REPOSITORY, first: %(repos)i, query: "stars:%(stars)s topic:react-components", after: %(after)s) {
-        edges {
-          cursor  
-          node {
-            ... on Repository {
-              nameWithOwner
-              url
-              stargazerCount
-              issues(first: 1, states: CLOSED) {
-                nodes {
-                  ...on Issue {
-                    createdAt
-                    closedAt
-                  }
-                }
-              }
-            }
-          }
+    url: str
+    repos_per_request: int
+    cursor = None
+    createdAt: str
+
+    def __init__(self, url: str, repos_per_request: int) -> None:
+        self.url = url
+        self.repos_per_request = repos_per_request
+
+    def get_repo_query(self, name: str, owner: str):
+        return """
+               query getIssues {
+                 repository(name: "%(name)s", owner: "%(owner)s") {
+                   issues(first: 100, after: %(after)s) {
+                   edges {
+                     cursor
+                     node {
+                       closed
+                       participants {
+                         totalCount
+                       }
+                     }
+                   }
+                   }
+                   }
+                 }
+               """ % {
+            'repos': self.repos_per_request,
+            'name': name,
+            'owner': owner,
+            'after': ('"{}"'.format(self.cursor) if self.cursor else 'null'),
         }
-      }
-    }
-    """ % {'repos': repos_per_request, 'stars': stars, 'after': ('"{}"'.format(cursor) if cursor else 'null')}
 
 
-def get_repos_data(url: str, query: str, token: str):
-    response: Response = requests.post(url, json={'query': query}, headers={
-        'Authorization': token
-    })
+    def get_repos_data(self, query: str, token: str):
+        response: Response = requests.post(self.url, json={'query': query}, headers={
+            'Authorization': token
+        })
 
-    if response.status_code != 200 or 'errors' in response.text:
-        print(response.text)
-        raise GithubException(
-            'There was an error while trying to make the request'
-        )
+        if response.status_code != 200 or 'errors' in response.text:
+            print(response.text)
+            raise GithubException(
+                'There was an error while trying to make the request'
+            )
 
-    json_data: dict = json.loads(response.text)
+        json_data: dict = json.loads(response.text)
 
-    return json_data['data']['search']['edges']
+
+        edges: list = json_data['data']['repository']['issues']['edges']
+
+        edges = [{**edge}
+                 for edge in edges]
+
+
+
+        return edges
