@@ -2,14 +2,13 @@ import os
 from src.models.GithubException import GithubException
 import src.CsvUtils as CsvUtils
 import time
-from src.Graphql import get_repos_data
-import src.CliArgs as CLI
-import src.Graphql as Graphql
+from src.Graphql import Graphql
+from src import CliArgs
 import progressbar
 
 from src.models.AuthToken import AuthToken
-from src.models.Repo import Repo
 from dotenv import load_dotenv
+import shutil
 
 # Load env file
 load_dotenv()
@@ -18,59 +17,93 @@ load_dotenv()
 progressbar.streams.flush()
 
 
-def mine_repos():
+def get_issue_ratio():
 
-    # Parse arguments
-    args = CLI.get_args()
+    # parse arguments
+    args = CliArgs.get_args(initialrepo=(
+        'Initial repo index', 0), cursor=('Current cursor', None))
 
     # Get env variables
     url = os.getenv('API_URL')
     token = AuthToken(os.getenv('AUTH_TOKENS').split(','))
-    topics = ['react-components', 'vue-components', 'material-components',
-              'material-design', 'ui-design', 'ui-components']
 
-    total_repos = int(args.total)
-    repos_per_request = int(args.per_request)
+    initial_repo = int(args.initialrepo)
 
-    if total_repos % repos_per_request != 0:
-        raise Exception(
-            'Repos per request should be divisible by total repos number')
+    graphql = Graphql(url, 100)
 
-    repo_list: list[Repo] = []
+    # read repos csv
+    repo_list = CsvUtils.read_repos_from_csv('final_ui_repos.csv')
+
+    trimmed_repos = repo_list[initial_repo:]
 
     print('Fetching repos...')
 
-    current_cursor = args.cursor
+    issue_list: list[dict] = []
 
-    for i in progressbar.progressbar(range(total_repos // repos_per_request), redirect_stdout=True):
-        try:
-            print('Fetching cursor: {}'.format(current_cursor))
-            print('Current token: {}'.format(token.get_token()))
+    # extremely necessary progress bar for better user experience
+    with progressbar.ProgressBar(max_value=len(trimmed_repos), redirect_stdout=True) as bar:
+        for index in range(len(trimmed_repos)):
+            repo = trimmed_repos[index]
 
-            # Build query
-            query = Graphql.get_query(repos_per_request, current_cursor)
+            print('Fetching PRs for Repo {}, index {}'.format(
+                repo.name_with_owner, index))
 
-            # Get repos
-            repo_data: list = get_repos_data(url, query, token.get_token())
+            # reset cursor
+            graphql.cursor = args.cursor
 
-            # add to list
-            repo_list = [*repo_list, *
-                         [Repo.from_github(repo) for repo in repo_data]]
+            temp_issues_list = []
 
-            # break if total was reach
-            if len(repo_list) == total_repos:
-                break
+            owner, name = repo.name_with_owner.split('/')
+            repo_csv = '{}.csv'.format(name)
+            # CsvUtils.create_header_file(
+            #     repo_csv, ['index', 'createdAt', 'closedAt', 'cursor'])
 
-            # set next cursor
-            current_cursor = repo_list[-1].cursor if len(
-                repo_list) > 0 else None
+            has_next_page = True
+            # while has_next_page:
+            #     try:
+            #         print('Fetching cursor: {}'.format(graphql.cursor))
 
-        except GithubException:
-            time.sleep(len(repo_list) * 2)
-            token.next_token()
+            #         # get query
+            #         owner, name = repo.name_with_owner.split('/')
+            #         query = graphql.get_issues_query(owner, name)
 
-    CsvUtils.save_repos_to_csv(repo_list, 'repos.csv')
+            #         # fetch prs
+            #         issues, has_next_page = graphql.get_issues_data(
+            #             query, token.get_token())
+
+            #         # sleep sometime
+            #         temp_issues_list += issues
+            #         if len(temp_issues_list) > 0 and len(temp_issues_list) % 1000 == 0:
+            #             time.sleep(60)
+
+            #         # add issues to list and save
+            #         parsed_issues = [{'createdAt': item.get('node').get(
+            #             'createdAt'), 'closedAt':  item.get('node').get('closedAt'), 'cursor': graphql.cursor} for item in issues]
+            #         issue_list += parsed_issues
+            #         CsvUtils.save_list_to_csv(
+            #             parsed_issues, repo_csv, mode='a', header=False)
+
+            #     except Exception as err:
+            #         time.sleep(600)
+            #         token.next_token()
+
+            # time.sleep(180)
+
+            # read issues csv
+            issues = CsvUtils.read_issues_from_csv(
+                'issues/{}'.format(repo_csv))
+
+            # calculate issues and save
+            repo.calculate_issue_median(issues)
+
+            CsvUtils.save_list_to_csv(
+                [repo.__dict__], 'repos_with_issues.csv', mode='a', header=False)
+
+            # mv issues to folder
+            # shutil.move(repo_csv, 'issues')
+
+            bar.update(index)
 
 
 if __name__ == "__main__":
-    mine_repos()
+    get_issue_ratio()

@@ -1,0 +1,29 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "root"
+    },
+    {
+      "path": "InitialDataset",
+      "name": "Dataset"
+    },
+    {
+      "path": "Q1",
+      "name": "Question 1"
+    },
+    {
+      "path": "Q2",
+      "name": "Question 2"
+    },
+    {
+      "path": "Q3",
+      "name": "Question 3"
+    },
+    {
+      "path": "Q4",
+      "name": "Question 4"
+    }
+  ],
+  "settings": {}
+}

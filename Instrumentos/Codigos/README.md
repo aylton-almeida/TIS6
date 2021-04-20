@@ -4,17 +4,17 @@ O código do projeto está organizado de forma que cada pergunta do GQM está lo
 
 ## Perguntas
 
-1. **As bibliotecas de UI se tornaram necessárias para os projetos atuais?**
+1. **Qual a probabilidade de você ser respondido quando pergunta algo sobre a biblioteca?**
 
-   - Percentagem de repositórios criados durante o ano de 2020 com bibliotecas comparados aos que não possuem bibliotecas
-   - Comparação de estrelas dentro os repositórios que utilizam de bibliotecas comparado aos que não utilizam
+   - Número de questões respondidas no StackOverflow por número total de perguntas
+   - Número de Issues abertas por número de Issues fechadas com participação de outras pessoas
 
-2. **Comunidades das bibliotecas mais populares possuem um maior suporte à duvidas?**
+2. **Com que frequência as bibliotecas recebem atualização?**
 
-   - Número de questões respondidas no StackOverflow / número total de perguntas
-   - Tempo médio entre criação de uma Issue e seu fechamento
+   - Número de releases por idade do repositório em anos completos
+   - Tempo mediano entre a abertura e fechamento de um PR (Em dias)
 
-3. **As bibliotecas de UI costuma receber atualizações com frequência?**
+3. **Uma biblioteca com muitos componentes aumenta muito o tamanho da sua aplicação?**
 
-   - Número de releases / idade do repositório
-   - Tempo médio para um PR ser aceito
+   - Número de componentes da biblioteca
+   - Tamanho da biblioteca em KB
