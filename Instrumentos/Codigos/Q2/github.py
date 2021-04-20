@@ -104,7 +104,7 @@ def main():
     namesWithOwner = getRepoNames('final_ui_repos.csv')
 
     for name in namesWithOwner:
-        getRepoInfo("myliang/fish-ui")
+        getRepoInfo(name)
 
 
 main()
