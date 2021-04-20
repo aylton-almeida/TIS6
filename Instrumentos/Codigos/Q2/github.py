@@ -47,7 +47,6 @@ def getRepoInfo(repoNameWithOwner):
   try:
     json_data = json.loads(getRepoRequest(nameWithOwner[1], nameWithOwner[0]).text)
     if json_data is not None:
-      print(json_data)
       repoData = {
         'name_with_owner': nameWithOwner,
         'stargazer_count': json_data['data']['repository']['stargazerCount'],
