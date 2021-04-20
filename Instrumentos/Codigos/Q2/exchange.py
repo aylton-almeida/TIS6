@@ -1,4 +1,6 @@
+import time
 from datetime import datetime
+from time import sleep
 
 from stackapi import StackAPI
 
@@ -11,7 +13,7 @@ names = data['name'].tolist()
 
 for name in names:
     print(name)
-    exchange = StackAPI('stackoverflow')
+    exchange = StackAPI('stackoverflow', key='6XxpO5wC8dfXJGRVwV8qWA((')
     exchange.page_size = 100
     exchange.max_pages = 10
     raw_questions = exchange.fetch('questions', tagged=name,
@@ -25,3 +27,4 @@ for name in names:
     if(data.get('is_answered') > 0 & data.get('questions') > 0):
         data['average'] = (data.get('is_answered') / data.get('questions'))
     DataFrame([data]).to_csv('stackoverflow.csv', mode='a', header=False, index=False)
+    time.sleep(5)

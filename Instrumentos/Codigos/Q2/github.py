@@ -54,7 +54,7 @@ def getRepoInfo(repoNameWithOwner):
         'closed_issues_with_participants' : getClosedIssuesWithParticipants(repoNameWithOwner, int(json_data['data']['repository']['issues']['totalCount'])),
       }
       if(int(repoData['closed_issues_with_participants']) > 0 & int(repoData['total_issues']) > 0):
-        repoData['average_issues'] = int(repoData['closed_issues_with_participants'])/int(repoData['total_issues'])
+        repoData['average_issues'] = round(int(repoData['closed_issues_with_participants'])/int(repoData['total_issues']),3)
       DataFrame([repoData]).to_csv('final_repos.csv', mode='a', header=False, index=False)
   except:
     raise Exception('Erro ao obter repositório')
