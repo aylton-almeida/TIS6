@@ -44,7 +44,7 @@ def get_commits_ratio():
         repo.set_bug_prs(graphql, token)
 
         CsvUtils.save_list_to_csv(
-            [repo.__dict__], 'repos_with_prs.csv', mode='a')
+            [repo.__dict__], 'repos_with_prs2.csv', mode='a')
 
 
 if __name__ == "__main__":

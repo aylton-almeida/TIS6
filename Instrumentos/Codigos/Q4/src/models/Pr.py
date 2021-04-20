@@ -8,11 +8,15 @@ class Pr:
     cursor: str
     id: str
     state: str
+    body: str
+    labels: list[str]
 
     def __init__(self, data: dict) -> None:
         self.cursor = data.get('cursor')
         self.id = data.get('id')
         self.state = data.get('state')
+        self.body = data.get('body')
+        self.labels = data.get('labels')
 
     @staticmethod
     def from_github(data: dict) -> Pr:
@@ -22,6 +26,8 @@ class Pr:
             'cursor': data.get('cursor'),
             'id': node.get('id'),
             'state': node.get('state'),
+            'body': node.get('body'),
+            'labels': [item.get('name') for item in node.get('labels').get('nodes')]
         })
 
     @staticmethod

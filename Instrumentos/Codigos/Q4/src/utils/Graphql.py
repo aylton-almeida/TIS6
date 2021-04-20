@@ -78,7 +78,7 @@ class Graphql:
         return """
                query {
                  repository(owner: "%(owner)s", name: "%(name)s") {
-                   pullRequests(first: %(issues)i, labels: [%(labels)s],after: %(after)s) {
+                   pullRequests(first: %(issues)i, after: %(after)s) {
                      pageInfo {
                        hasNextPage
                      }
@@ -88,6 +88,12 @@ class Graphql:
                          ... on PullRequest {
                            id
                            state
+                           body
+                           labels(first: 10) {
+                             nodes {
+                               name
+                             }
+                           }
                          }
                        }
                      }
@@ -98,7 +104,6 @@ class Graphql:
             'owner': owner,
             'name': name,
             'issues': self.items_per_request,
-            'labels': ','.join('"{}"'.format(item) for item in labels),
             'after': ('"{}"'.format(self.cursor) if self.cursor else 'null')
         }
 

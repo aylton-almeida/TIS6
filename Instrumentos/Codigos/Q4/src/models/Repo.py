@@ -94,7 +94,16 @@ class Repo:
                     pr_query, token.get_token())
 
                 # add prs to list
-                prs += [Pr.from_github(issue) for issue in new_prs]
+                for new_pr in new_prs:
+                    pr = Pr.from_github(new_pr)
+
+                    has_any_label = False
+                    for label in pr.labels:
+                        if label in labels:
+                            has_any_label = True
+
+                    if 'bug' in pr.body or 'error' in pr.body or 'fix' in pr.body or has_any_label:
+                        prs.append(pr)
 
                 # sleep a bit
                 time.sleep(1)
