@@ -1,56 +1,30 @@
 import time
-from src.models.Repo import Repo
-from src import CliArgs, CsvUtils, Exchange
-from dotenv import load_dotenv
+from datetime import datetime
+from time import sleep
 
-# Load env file
-load_dotenv()
+from stackapi import StackAPI
 
+from pandas import *
+from src.models.Question import Question
 
-def get_questions():
+csvName = "final_ui_repos.csv"
+data = read_csv(csvName)
+names = data['name'].tolist()
 
-    # parse arguments
-    args = CliArgs.get_args(initialrepo=('Initial repo index', 0), out=(
-        'File in where to save the results', 'repos_with_questions.csv'), input=(
-        'File from where to read the repos', 'final_ui_repos.csv'))
+for name in names:
+    print(name)
+    exchange = StackAPI('stackoverflow', key='6XxpO5wC8dfXJGRVwV8qWA((')
+    exchange.page_size = 100
+    exchange.max_pages = 10
+    raw_questions = exchange.fetch('questions', tagged=name,
+                                   fromdate=datetime(2020, 1, 1), todate=datetime(2020, 12, 31))
 
-    initial_repo = int(args.initialrepo)
-    out = args.out
-    input = args.input
+    questions = [Question(question) for question in raw_questions['items']]
 
-    # read repos csv
-    repo_list = CsvUtils.read_repos_from_csv(input)
-
-    trimmed_repos = repo_list[initial_repo:]
-
-    print('Fetching questions...')
-
-    repo_list: list[Repo] = []
-
-    for index in range(len(trimmed_repos)):
-        repo = trimmed_repos[index]
-
-        questions = None
-
-        time.sleep(1)
-
-        print('Fetching repo {}...'.format(repo.name_with_owner))
-
-        while questions is None:
-            try:
-                questions = Exchange.get_questions_by_tag(repo.get_name())
-            except:
-                time.sleep(180)
-
-        repo.set_answered_questions(questions)
-
-        if repo.answered_questions:
-            CsvUtils.save_list_to_csv(
-                [repo.__dict__], out, mode='a', header=False)
-        else:
-            CsvUtils.save_list_to_csv(
-                [repo.__dict__], 'no_questions_found.csv', mode='a', header=False)
-
-
-if __name__ == '__main__':
-    get_questions()
+    print(
+        '{}/{}'.format(len([question for question in questions if question.is_answered]), len(questions)))
+    data={'name': name, 'is_answered':len([question for question in questions if question.is_answered]), 'questions': len(questions) }
+    if(data.get('is_answered') > 0 & data.get('questions') > 0):
+        data['average'] = (data.get('is_answered') / data.get('questions'))
+    DataFrame([data]).to_csv('stackoverflow.csv', mode='a', header=False, index=False)
+    time.sleep(5)
