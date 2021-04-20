@@ -2,7 +2,8 @@ def getIssueQuery(name: str, owner: str, cursor: str):
         return """
                query getIssues {
                  repository(name: "%(name)s", owner: "%(owner)s") {
-                   issues(first: 100, %(cursor)s) {
+                   issues(states: CLOSED, first: 100, %(cursor)s) {
+                     totalCount
                    edges {
                      cursor
                      node {
@@ -23,4 +24,21 @@ def getIssueQuery(name: str, owner: str, cursor: str):
             'name': name,
             'owner': owner,
             'cursor': """ after:"%s" """ % cursor if (cursor != None) else 'after: null'
+        }
+
+
+
+def getRepoInfoQuery(name: str, owner: str):
+  return """
+  query repoInfo {
+  repository(name: "%(name)s", owner: "%(owner)s") {
+    issues {
+      totalCount
+    }
+    stargazerCount
+  }
+}
+  """ % {
+            'name': name,
+            'owner': owner,
         }

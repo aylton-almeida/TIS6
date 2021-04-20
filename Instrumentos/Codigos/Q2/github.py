@@ -1,25 +1,18 @@
 import os
 import time
+
 import requests
-from pandas.io import json
-# from src import CliArgs
-from src.models.AuthToken import AuthToken
-from src.Graphql import Graphql
 from dotenv import load_dotenv
-from src.models.Issue import Issue
-from src.models.GithubException import GithubException
-from src import CsvUtils
+from numpy import average
+from requests.api import request
+
 from pandas import *
-from src.query import getIssueQuery
-
-
-
+from pandas.io import json
+from src.query import getIssueQuery, getRepoInfoQuery
 
 # Load env file
 load_dotenv()
 
-# flush progress bar
-# progressbar.streams.flush()
 
 headerIndex = 0
 
@@ -42,10 +35,41 @@ def getIssueRequest(name, owner, cursor = None):
   except requests.exceptions.HTTPError as err:
     raise SystemExit(err)
 
-def getIssues(repoNameWithOwner):
+def getRepoRequest(name, owner):
+  head = getHeader()
+  try:
+    return requests.post(url, json={'query': getRepoInfoQuery(name, owner)}, headers= head)
+  except requests.exceptions.HTTPError as err:
+    raise SystemExit(err)
+
+def getRepoInfo(repoNameWithOwner):
+  nameWithOwner = repoNameWithOwner.split('/')
+  try:
+    json_data = json.loads(getRepoRequest(nameWithOwner[1], nameWithOwner[0]).text)
+    if json_data is not None:
+      print(json_data)
+      repoData = {
+        'name_with_owner': nameWithOwner,
+        'stargazer_count': json_data['data']['repository']['stargazerCount'],
+        'total_issues': json_data['data']['repository']['issues']['totalCount'],
+        'closed_issues_with_participants' : getClosedIssuesWithParticipants(repoNameWithOwner, int(json_data['data']['repository']['issues']['totalCount'])),
+      }
+      if(int(repoData['closed_issues_with_participants']) > 0 & int(repoData['total_issues']) > 0):
+        repoData['average_issues'] = int(repoData['closed_issues_with_participants'])/int(repoData['total_issues'])
+      DataFrame([repoData]).to_csv('final_repos.csv', mode='a', header=False, index=False)
+  except:
+    raise Exception('Erro ao obter repositório')
+    
+
+
+
+def getClosedIssuesWithParticipants(repoNameWithOwner, totalIssues):
+    if(totalIssues == 0 ): return 0
     nameWithOwner = repoNameWithOwner.split('/')
     hasNextPage = True
     lastCursor = None
+    closedIssues = 0
+    print(nameWithOwner)
 
     while (hasNextPage):
         try:
@@ -54,20 +78,22 @@ def getIssues(repoNameWithOwner):
                 issues = json_data['data']['repository']['issues']['edges']
                 hasNextPage = json_data['data']['repository']['issues']['pageInfo']['hasNextPage']
                 lastCursor = json_data['data']['repository']['issues']['pageInfo']['endCursor']
-                print(len(issues))
+                totalClosedIssues = json_data['data']['repository']['issues']['totalCount']
+
+                if(totalClosedIssues == 0 ): return 0
                 
                 for issue in issues: 
                     issueData = {
                         'cursor':issue['cursor'],
-                        'closed': issue['node']['closed'],
                         'participants': issue['node']['participants']['totalCount']
                     }
-                    if issueData['participants'] > 2 :
-                        DataFrame([issueData]).to_csv('issues.csv', mode='a', header=False, index=False)
+                    if int(issueData['participants']) > 1 :
+                      closedIssues += 1
 
                 time.sleep(5)
         except:
             raise Exception('Erro ao obter dado da issue')
+    return closedIssues  
 
 def getRepoNames(csvName: str):
     data = read_csv(csvName)
@@ -78,7 +104,7 @@ def main():
     namesWithOwner = getRepoNames('final_ui_repos.csv')
 
     for name in namesWithOwner:
-        getIssues(name)
+        getRepoInfo("myliang/fish-ui")
 
 
 main()
