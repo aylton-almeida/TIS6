@@ -20,7 +20,7 @@ progressbar.streams.flush()
 def mine_repos():
 
     # parse arguments
-    args = CliArgs.get_args(total=('Total repos to be fetch', 1000),
+    args = CliArgs.get_args(total=('Total repos to be fetch', 300),
                             perrequest=('Number of repos per request', 100))
 
     # Get env variables
