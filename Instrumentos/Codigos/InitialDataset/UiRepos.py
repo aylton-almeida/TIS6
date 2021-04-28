@@ -1,15 +1,14 @@
-from datetime import datetime, timezone
 import os
 import time
-import progressbar
-from src import CliArgs
-from src.models.AuthToken import AuthToken
-from src.Graphql import Graphql
-from dotenv import load_dotenv
-from src.models.Repo import Repo
-from src.models.GithubException import GithubException
-from src import CsvUtils
 
+import progressbar
+from dotenv import load_dotenv
+
+from src import CliArgs, CsvUtils
+from src.Graphql import Graphql
+from src.models.AuthToken import AuthToken
+from src.models.GithubException import GithubException
+from src.models.Repo import Repo
 
 # Load env file
 load_dotenv()
@@ -21,13 +20,14 @@ progressbar.streams.flush()
 def mine_repos():
 
     # parse arguments
-    args = CliArgs.get_args(total=('Total repos to be fetch', 2000),
+    args = CliArgs.get_args(total=('Total repos to be fetch', 1000),
                             perrequest=('Number of repos per request', 100))
 
     # Get env variables
     url = os.getenv('API_URL')
     token = AuthToken(os.getenv('AUTH_TOKENS').split(','))
-    topics = ['react-components', 'vue-components', 'angular-components']
+    topics = ['react-components', 'react-component', 'vue-components', 'vue-component',
+              'ui-components', 'component-library', 'components', 'webcomponents']
 
     total_repos = int(args.total)
     repos_per_request = int(args.perrequest)
@@ -46,6 +46,7 @@ def mine_repos():
         while len(repo_list) < total_repos:
             try:
                 print('Fetching topic: {}'.format(graphql.get_current_topic()))
+                print('Fetching cursor: {}'.format(graphql.cursor))
                 print('Current token: {}'.format(token.get_token()))
 
                 # Build query
@@ -58,7 +59,7 @@ def mine_repos():
                 for repo in [Repo.from_github(repo) for repo in repo_data]:
                     if len(repo_list) == total_repos:
                         break
-                    elif not next((r for r in repo_list if r.name_with_owner == repo.name_with_owner), None) and repo.createdAt < datetime(2021, 1, 1, tzinfo=timezone.utc):
+                    elif not next((r for r in repo_list if r.name_with_owner == repo.name_with_owner), None):
                         repo_list.append(repo)
 
                 # break if total was reach

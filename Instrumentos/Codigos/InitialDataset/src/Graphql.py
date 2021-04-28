@@ -1,8 +1,9 @@
-from src.models.GithubException import GithubException
-import requests
 import json
 
+import requests
 from requests.models import Response
+
+from src.models.GithubException import GithubException
 
 
 class Graphql:
@@ -24,7 +25,7 @@ class Graphql:
     def get_query(self):
         return """
                query example {
-                 search(type: REPOSITORY, first: %(repos)i, query: "topic:%(topic)s", after: %(after)s) {
+                 search(type: REPOSITORY, first: %(repos)i, query: "stars:>100 topic:%(topic)s", after: %(after)s) {
                    edges {
                      cursor  
                      node {

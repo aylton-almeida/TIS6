@@ -13,7 +13,7 @@ function App() {
       </aside>
       <main>
         <header>
-          <Typography variant="body2">
+          <Typography variant="body1">
             Not a member?
             <Link> Sign up now</Link>
           </Typography>
