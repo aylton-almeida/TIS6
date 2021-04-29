@@ -1,0 +1,116 @@
+@import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-react-inputs/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-buttons/styles/material.css";
+
+:root {
+  --header-height: 60px;
+}
+
+.App {
+  text-align: center;
+  display: flex;
+}
+
+.App-logo {
+  height: 35vmin;
+  pointer-events: none;
+  animation: App-logo-spin infinite 20s linear;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  padding: 0 16px;
+  width: 30%;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+main {
+  background-color: snow;
+  width: 70%;
+  padding: 0 24px;
+  height: 100vh;
+}
+
+header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  height: var(--header-height);
+}
+
+.container {
+  height: calc(100% - 60px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+form {
+  height: 500px;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.title {
+  align-self: flex-start;
+}
+
+svg {
+  fill: currentColor;
+  height: 13px;
+  width: 13px;
+  vertical-align: middle;
+  margin-top: -1px;
+  margin-right: 10px;
+}
+
+.divider {
+  overflow: visible;
+  padding: 0;
+  margin-bottom: 10px;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  color: #6e6d7a;
+  text-align: center;
+  width: 100%;
+}
+
+hr::after {
+  content: "Or";
+  display: inline-block;
+  position: relative;
+  top: -12px;
+  font: normal 14px/14px "Haas Grot Text R Web", "Helvetica Neue", Helvetica,
+    Arial, sans-serif;
+  padding: 0 16px;
+  background: #fff;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+label.field-label {
+  margin-bottom: 8px;
+  align-self: flex-start;
+}
