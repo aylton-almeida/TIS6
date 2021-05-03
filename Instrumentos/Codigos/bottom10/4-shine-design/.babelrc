@@ -1,0 +1,13 @@
+// .babelrc or babel-loader option
+{
+  "plugins": [
+    [
+      "import",
+      {
+        "libraryName": "shined",
+        "libraryDirectory": "src/components",
+        "style": "css"
+      }
+    ]
+  ]
+}
