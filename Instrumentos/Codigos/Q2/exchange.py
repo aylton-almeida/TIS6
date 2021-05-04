@@ -7,7 +7,7 @@ from stackapi import StackAPI
 from pandas import *
 from src.models.Question import Question
 
-csvName = "final_ui_repos.csv"
+csvName = "bottom10repos.csv"
 data = read_csv(csvName)
 names = data['name'].tolist()
 
@@ -26,5 +26,5 @@ for name in names:
     data={'name': name, 'is_answered':len([question for question in questions if question.is_answered]), 'questions': len(questions) }
     if(data.get('is_answered') > 0 & data.get('questions') > 0):
         data['average'] = (data.get('is_answered') / data.get('questions'))
-    DataFrame([data]).to_csv('stackoverflow.csv', mode='a', header=False, index=False)
+    DataFrame([data]).to_csv('bottom10stackoverflow.csv', mode='a', header=False, index=False)
     time.sleep(5)
