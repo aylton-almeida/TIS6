@@ -117,13 +117,13 @@ def formatDataInfo(fileName, nameWithOwner):
     raise Exception("Erro ao obter dados do repositório: %s" % e) 
 
 def analyzeUIRepos():
-  df = pandas.read_csv('../InitialDataset/final_ui_repos.csv')
+  df = pandas.read_csv('../InitialDataset/top10repos.csv')
   lastCursor = int(sys.argv[1])
   for index, row in [*df.iterrows()][lastCursor:]:
     nameWithOwner = row['name_with_owner'].split("/");
     hasNextPage = True
     lastCursor = None
-    repoIsNotEmpty = False
+    repoIsEmpty = False
     while (hasNextPage):
       try:
         json_data = json.loads(doApiRequestGetPRs(nameWithOwner[1], nameWithOwner[0], lastCursor).text)
@@ -140,11 +140,12 @@ def analyzeUIRepos():
             }
             pandas.DataFrame([prData]).to_csv('%s_prs.csv' % nameWithOwner[1], mode='a', header=False, index=False)
             time.sleep(2)
-          else:
-            repoIsNotEmpty = True
+            hasNextPage = False
+        else:
+          repoIsEmpty = True
       except:
         raise Exception("Erro ao obter dados do repositório!") 
-    if repoIsNotEmpty:
+    if repoIsEmpty == False:
       formatDataInfo('%s_prs.csv' % nameWithOwner[1], row['name_with_owner'])
       
 def main():
