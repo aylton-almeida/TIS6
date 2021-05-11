@@ -1,6 +1,6 @@
 # Caracterização de Bibliotecas de UI
 
-Nosso projeto tem como objetivo caracterizar bibliotecas de UI com o objetivo de auxiliar desenvolveres e empresas na escolha de bibliotecas para seus projetos.
+Nosso projeto tem como objetivo caracterizar bibliotecas de UI com o objetivo de compara-las, definindo parâmetros interessantes para a escolha de uma biblioteca para seu projeto.
 
 ## Alunos integrantes da equipe
 
