@@ -14,7 +14,7 @@ O código do projeto está organizado de forma que cada pergunta do GQM está lo
    - Número de releases por idade do repositório em anos completos
    - Tempo mediano entre a abertura e fechamento de um PR (Em dias)
 
-3. **Uma biblioteca com muitos componentes aumenta muito o tamanho da sua aplicação?**
+3. **A escolha de uma biblioteca mais popular tem um grande impacto no desempenho da aplicação?**
 
-   - Número de componentes da biblioteca
-   - Tamanho da biblioteca em KB
+   - First Contentful Paint
+   - Time to Interactive
